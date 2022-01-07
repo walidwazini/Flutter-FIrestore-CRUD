@@ -12,6 +12,8 @@ class CreateUser extends StatefulWidget {
 }
 
 class _CreateUserState extends State<CreateUser> {
+  final Stream<QuerySnapshot> _usersStream =
+  FirebaseFirestore.instance.collection('betaUsers').snapshots();
   // const CreteUser({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -70,20 +72,23 @@ class _CreateUserState extends State<CreateUser> {
           StreamBuilder<List<User>>(
             stream: readUser(),
             builder: (BuildContext context, snapshot) {
+              final docUser = FirebaseFirestore.instance.collection('betaUsers').doc();
+              final users = snapshot.data!;
               if (snapshot.hasError) {
-                return Text('Bye');
+                return Text("something is wrong");
               }
-              else if (snapshot.hasData){
-                final users = snapshot.data!;
-                return ListView(
-                  children: users.map(buildUser).toList(),
-                );
-              }
-              else {
+              if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
                   child: CircularProgressIndicator(),
                 );
               }
+              return Container(
+                child: Column(
+                  children: [
+
+                  ],
+                ),
+              );
             },
           ),
           ElevatedButton(
@@ -111,6 +116,7 @@ class _CreateUserState extends State<CreateUser> {
     await docUser.set(json);
   }
 
+  //Todo
   Future createUser({required String nameF}) async {
     // Reference to document
     final docUser = FirebaseFirestore.instance.collection('betaUsers').doc();
