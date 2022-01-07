@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "175368293221",
+    "project_id": "crud-tutorial-1-3490d",
+    "storage_bucket": "crud-tutorial-1-3490d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:175368293221:android:a7bf1f99971666bac4af8c",
+        "android_client_info": {
+          "package_name": "com.example.firebase_tutorial_1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "175368293221-d2l7vmafa7pk93bl3ggf28up0cf7tkvt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDS_vvkpyjB5mDGQUq7UaeBZO3tXhWYx3Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "175368293221-d2l7vmafa7pk93bl3ggf28up0cf7tkvt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
