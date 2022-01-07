@@ -15,7 +15,6 @@ class _CreateUserState extends State<CreateUser> {
   // const CreteUser({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    DateLocale _dateLocale = EnglishDateLocale();
     TextEditingController nameController = TextEditingController();
     final dateController = TextEditingController();
 
@@ -66,13 +65,46 @@ class _CreateUserState extends State<CreateUser> {
               // createUser(nameF: nameVar);
             },
             child: Text('Add User'),
-          )
+          ),
+          SizedBox(),
+          StreamBuilder<List<User>>(
+            stream: readUser(),
+            builder: (BuildContext context, snapshot) {
+              if (snapshot.hasError) {
+                return Text('Bye');
+              }
+              else if (snapshot.hasData){
+                final users = snapshot.data!;
+                return ListView(
+                  children: users.map(buildUser).toList(),
+                );
+              }
+              else {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            },
+          ),
+          ElevatedButton(
+            onPressed: () {
+              readUser();
+            },
+            child: Text('Text'),
+          ),
         ],
       ),
     );
   }
 
+  Widget buildUser(User user) => ListTile(
+        title: Text(user.name),
+        subtitle: Text(user.birthday.toString()),
+      );
+
+  //   ------ Create
   Future addUser(User user) async {
+    // Reference to document
     final docUser = FirebaseFirestore.instance.collection('betaUsers').doc();
     user.id = docUser.id;
     final json = user.toJson();
@@ -89,6 +121,20 @@ class _CreateUserState extends State<CreateUser> {
     // Create document and write data to Firebase
     await docUser.set(json);
   }
+
+  // ----------- READ
+  Stream<List<User>> readUser() {
+    final fireInstance = FirebaseFirestore.instance;
+    return fireInstance.collection('betaUsers').snapshots().map(
+          (s) => s.docs
+              .map(
+                (doc) => User.fromJson(
+                  doc.data(),
+                ),
+              )
+              .toList(),
+        );
+  }
 }
 
 class User {
@@ -104,4 +150,7 @@ class User {
 
   Map<String, dynamic> toJson() =>
       {'id': id, 'name': name, 'birthday': birthday};
+
+  static User fromJson(Map<String, dynamic> json) =>
+      User(id: json['id'], name: json['name'], birthday: json['birthday']);
 }
