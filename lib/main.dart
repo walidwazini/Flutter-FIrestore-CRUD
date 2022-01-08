@@ -1,6 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(StartApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(StartApp());
+}
 
 class StartApp extends StatelessWidget {
   @override
@@ -9,7 +15,7 @@ class StartApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.light,
         primaryColor: Colors.blue,
-        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.purple)
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.red)
             .copyWith(secondary: Colors.cyan),
       ),
       home: MyApp(),
@@ -23,7 +29,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String? studentName, studentID, studyProgram;
+  String? studentName, studentID, studentStudyProgram;
   double? studentGPA;
 
   getStudentName(name) {
@@ -35,12 +41,32 @@ class _MyAppState extends State<MyApp> {
   }
 
   getProgramId(programName) {
-    this.studyProgram = programName;
+    this.studentStudyProgram = programName;
   }
 
   getGpa(gpa) {
     this.studentGPA = double.parse(gpa);
   }
+
+  createData() {
+    DocumentReference docReference =
+        FirebaseFirestore.instance.collection('myStudents').doc(studentID);
+
+    Map<String,dynamic> student =  {
+      'studentName': studentName,
+      'studentID' : studentID,
+      'studentStudyProgram' : studentStudyProgram,
+      'studentGPA': studentGPA
+    };
+
+    docReference.set(student).whenComplete(() => print('${studentName} is created '));
+  }
+
+  readData() {}
+
+  updateData() {}
+
+  deleteData() {}
 
   @override
   Widget build(BuildContext context) {
@@ -50,60 +76,62 @@ class _MyAppState extends State<MyApp> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
-              child: TextFormField(
-                decoration: InputDecoration(
-                    labelText: 'Name',
-                    fillColor: Colors.white,
-                    focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Colors.black, width: 2.0))),
-                onChanged: (String name) {
-                  getStudentName(name);
-                },
-              ),
-            ),
-            _buildTextField('Student ID', (id) {
-              getStudentID(id);
-            }),
-            _buildTextField('Study Program', (programId) {
-              getProgramId(programId);
-            }),
-            _buildTextField('GPA', (gpa) {
-              getGpa(gpa);
-            }),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Container(
-                  width: 80,
-                  height: 40,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      createData();
-                    },
-                    child: Text('Create'),
-                    style: ElevatedButton.styleFrom(
-                        primary: Colors.green,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                  ),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                      labelText: 'Name',
+                      fillColor: Colors.white,
+                      focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.black, width: 2.0))),
+                  onChanged: (String name) {
+                    getStudentName(name);
+                  },
                 ),
-                _buildButton('Read', () {
-                  readData();
-                }, Colors.blue),
-                _buildButton('Update', () {
-                  updateData();
-                }, Colors.indigo),
-                _buildButton('Delete', () {
-                  deleteData();
-                }, Colors.red),
-              ],
-            )
-          ],
+              ),
+              _buildTextField('Student ID', (id) {
+                getStudentID(id);
+              }),
+              _buildTextField('Study Program', (programId) {
+                getProgramId(programId);
+              }),
+              _buildTextField('GPA', (gpa) {
+                getGpa(gpa);
+              }),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    width: 80,
+                    height: 40,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        createData();
+                      },
+                      child: Text('Create'),
+                      style: ElevatedButton.styleFrom(
+                          primary: Colors.green,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10))),
+                    ),
+                  ),
+                  _buildButton('Read', () {
+                    readData();
+                  }, Colors.blue),
+                  _buildButton('Update', () {
+                    updateData();
+                  }, Colors.indigo),
+                  _buildButton('Delete', () {
+                    deleteData();
+                  }, Colors.red),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -129,7 +157,7 @@ class _MyAppState extends State<MyApp> {
       height: 40,
       child: ElevatedButton(
         onPressed: onPressHandler,
-        child: Text('Create'),
+        child: Text(title),
         style: ElevatedButton.styleFrom(
             primary: warna,
             shape: RoundedRectangleBorder(
