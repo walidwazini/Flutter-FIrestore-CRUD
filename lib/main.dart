@@ -15,7 +15,7 @@ class StartApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.light,
         primaryColor: Colors.blue,
-        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.red)
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.indigo)
             .copyWith(secondary: Colors.cyan),
       ),
       home: MyApp(),
@@ -52,17 +52,21 @@ class _MyAppState extends State<MyApp> {
     DocumentReference docReference =
         FirebaseFirestore.instance.collection('myStudents').doc(studentID);
 
-    Map<String,dynamic> student =  {
+    Map<String, dynamic> student = {
       'studentName': studentName,
-      'studentID' : studentID,
-      'studentStudyProgram' : studentStudyProgram,
+      'studentID': studentID,
+      'studentStudyProgram': studentStudyProgram,
       'studentGPA': studentGPA
     };
 
-    docReference.set(student).whenComplete(() => print('${studentName} is created '));
+    docReference
+        .set(student)
+        .whenComplete(() => print('${studentName} is created '));
   }
 
-  readData() {}
+  readData() {
+
+  }
 
   updateData() {}
 
